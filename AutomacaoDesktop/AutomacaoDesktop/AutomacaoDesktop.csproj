@@ -54,8 +54,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Applications\AppBrowser.cs" />
-    <Compile Include="Applications\Application.cs" />
+    <Compile Include="AppBrowser.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FileManager.cs" />
     <Compile Include="Program.cs" />

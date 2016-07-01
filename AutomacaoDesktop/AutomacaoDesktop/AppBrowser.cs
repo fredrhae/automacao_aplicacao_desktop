@@ -23,7 +23,7 @@ namespace AutomacaoDesktop
             log.Info("Inicializando driver do word no servidor remoto: " + remoteAddress);
             try
             {
-                webDriver = new RemoteWebDriver(new Uri("http://localhost:9999"), getCapability());
+                webDriver = new RemoteWebDriver(new Uri(remoteAddress), getCapability());
                 wordWindows = webDriver.FindElementByClassName("OpusApp");
             } 
             catch (OpenQA.Selenium.WebDriverException ex)
