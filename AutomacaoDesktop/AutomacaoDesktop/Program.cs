@@ -1,32 +1,54 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using System;
+using System.Threading;
 
 
 namespace AutomacaoDesktop
 {
     class Program
     {
+        private static string pathArquivoTextoEntrada = "automacao_desktop_texto_entrada.txt";
+        private static string evidencesFolder = @"C:\Projeto\";
+
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+
         static void Main(string[] args)
         {
-            var dc = new DesiredCapabilities();
-            dc.SetCapability("app", @"C:/Program Files (x86)/Microsoft Office/Office14/WINWORD.EXE");
-            var driver = new RemoteWebDriver(new Uri("http://localhost:9999"), dc);
 
-            var textField = driver.FindElementByClassName("_WwG");
-            textField.Click();
-            textField.SendKeys("Alô alô testando");
+            if(AppBrowser.Initialize())
+            {
 
-            var saveButton = driver.FindElementByName("Save");
-            saveButton.Click();
+                var inputText = FileManager.ReadFile(evidencesFolder + pathArquivoTextoEntrada);
 
-            var savePopup = driver.FindElementByName("Save As");
-            var fileName = savePopup.FindElement(By.Id("1001"));
-            fileName.Click();
-            fileName.SendKeys("nome_qualquer");
-            savePopup.FindElement(By.Name("Save")).Click();
+                var arquivoVazio = string.IsNullOrEmpty(inputText);
 
-            driver.Quit();
+                if (!arquivoVazio)
+                {
+                    AppBrowser.SetTextInWord(inputText);
+
+                    Thread.Sleep(1000);
+
+                    AppBrowser.TakeScreenShot(evidencesFolder);
+
+                    AppBrowser.SaveDocument(evidencesFolder);
+                }
+                else
+                {
+                    log.Error("Arquivo de entrada está vazio.");
+                }
+
+                AppBrowser.Close();
+
+                if (!arquivoVazio)
+                    FileManager.DeleteFile(evidencesFolder + pathArquivoTextoEntrada);
+            }
+            else
+            {
+                log.Error("Por favor, verifique se o servidor remoto está escutando na porta 9999");
+            }
+            
         }
     }
 }
